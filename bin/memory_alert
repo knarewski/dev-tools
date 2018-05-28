@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+
+class MemoryMonitor
+  attr_reader :low_memory_threshold
+
+  def initialize(low_threshold: 0)
+    @low_memory_threshold = low_threshold
+  end
+
+  def check_every(num_seconds)
+    loop do
+      show_alert_if_low_memory
+      sleep num_seconds
+    end
+  end
+
+  private
+
+  def show_alert_if_low_memory
+    current_free_memory = free_memory_mb
+    puts "Current free memory: #{current_free_memory}MB"
+    return if current_free_memory > low_memory_threshold
+    system('notify-send', 'Memory is running low', "Only #{current_free_memory}MB remaining")
+  end
+
+  def free_memory_mb
+    `free -m`.lines.grep(/-\/+/).first.split(/\s+/)[3].to_i
+  end
+end
+
+MemoryMonitor.new(low_threshold: 700).check_every(30)
