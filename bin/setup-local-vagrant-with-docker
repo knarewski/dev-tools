@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+
+require 'etc'
+
+Dir.chdir(File.expand_path("../support/#{File.basename(__FILE__)}", __dir__))
+# NOTE: should we ensure vagrant and ansible installed?
+
+# Does not work on the first run. Why?
+system('ssh-keygen', '-f', "#{Dir.home}/.ssh/known_hosts", '-R', '192.168.50.5') || fail('Can\'t clean up the known_hosts')
+system('vagrant', 'up')
+args = [
+  'ansible-playbook',
+  '--private-key=.vagrant/machines/default/virtualbox/private_key',
+  '-u', 'vagrant',
+  '-e', 'ansible_python_interpreter=/usr/bin/python3',
+  '-e', "username=#{Etc.getlogin}",
+  '-i', 'inventory.yml',
+  '--become',
+  'server_base.yml'
+]
+system(*args)
