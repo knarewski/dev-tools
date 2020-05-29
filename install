@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Detects current directory and add the `load` script to the .bashrc file, so it's loaded on every session
+
+set -euo pipefail # Ensure the script fails on error
+
+CURRENT_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+LOAD_DEVTOOLS_SCRIPT_PATH=$CURRENT_SCRIPT_DIR/load
+SOURCE_COMMAND="source '$LOAD_DEVTOOLS_SCRIPT_PATH'"
+SHELL_RC_FILES=("$HOME/.bashrc" "$HOME/.zshrc")
+
+# The command below checks whether the line exists in each shell rc file, and adds it if it doesn't
+for RC_FILE in "${SHELL_RC_FILES[@]}" ; do
+  # Skip if this file doesn't exist
+  if [ ! -e "$RC_FILE" ] ; then
+    continue
+  fi
+
+  grep -q -F "$SOURCE_COMMAND" "$RC_FILE" || echo "$SOURCE_COMMAND" >> "$RC_FILE"
+done
+
+echo -e "
+\e[32mTools have been successfully installed. To use them open a new terminal session or execute the following command:
+\e[0m$SOURCE_COMMAND
+"

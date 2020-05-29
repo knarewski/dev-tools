@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# The script adds the ./bin directory (relative to this script)
+# to the $PATH environment variable
+
+if [ -n "${BASH_SOURCE[0]}" ] ; then
+  SCRIPT_PATH="${BASH_SOURCE[0]}"
+else
+  # Support for ZSH
+  SCRIPT_PATH="$0"
+fi
+CURRENT_SCRIPT_DIR="$( cd "$( dirname "$SCRIPT_PATH" )" && pwd )"
+
+export PATH=$PATH:$CURRENT_SCRIPT_DIR/bin
