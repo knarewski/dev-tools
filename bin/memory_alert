@@ -24,7 +24,7 @@ class MemoryMonitor
   end
 
   def free_memory_mb
-    `free -m`.lines.grep(/-\/+/).first.split(/\s+/)[3].to_i
+    `free -m`.lines.grep(/Mem/).first.split(/\s+/)[3].to_i
   end
 end
 
